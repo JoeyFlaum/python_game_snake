@@ -1,32 +1,54 @@
 import pygame
 from pygame.locals import *
+import time
+import random
+
+SIZE = 40
+possible_directions = ['up', 'down', 'left', 'right']
 
 class Snake:
-    def __init__(self, parent_screen):
+    def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
         self.block = pygame.image.load("resources/block.jpg").convert()
-        self.x = 100
-        self.y = 100
+        self.x = [SIZE] * length
+        self.y = [SIZE] * length
+        self.length = length
+        self.direction = random.choice(possible_directions)  # random starting direction
 
     def draw(self):
         self.parent_screen.fill((110, 110, 5))
-        self.parent_screen.blit(self.block, (self.x, self.y))
+        for i in range(self.length):
+            self.parent_screen.blit(self.block, (self.x[i], self.y[i]))
         pygame.display.flip()
 
     def move_up(self):
-        self.y -= 10
+        self.direction = 'up'
         self.draw()
 
     def move_down(self):
-        self.y += 10
+        self.direction = 'down'
         self.draw()
 
     def move_right(self):
-        self.x += 10
+        self.direction = 'right'
         self.draw()
 
     def move_left(self):
-        self.x -= 10
+        self.direction = 'left'
+        self.draw()
+
+    def walk(self):
+        for i in range(self.length - 1, 0, -1):
+            self.x[i] = self.x[i - 1]
+            self.y[i] = self.y[i - 1]
+        if self.direction == 'up':
+            self.y[0] -= SIZE
+        if self.direction == 'down':
+            self.y[0] += SIZE
+        if self.direction == 'right':
+            self.x[0] += SIZE
+        if self.direction == 'left':
+            self.x[0] -= SIZE
         self.draw()
 
 
@@ -35,10 +57,10 @@ class Game:
         pygame.init()
         self.surface = pygame.display.set_mode((500, 500))
         self.surface.fill((110, 110, 5))
-        self.snake = Snake(self.surface)
+        self.snake = Snake(self.surface, 2)
         self.snake.draw()
 
-    def run(self):
+    def run(self, ):
         running = True
 
         while running:
@@ -56,6 +78,8 @@ class Game:
                         self.snake.move_right()
                 elif event.type == QUIT:
                     running = False
+            self.snake.walk()
+            time.sleep(.5) #snake speed
 
 
 if __name__ == "__main__":
