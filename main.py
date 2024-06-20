@@ -6,6 +6,19 @@ import random
 SIZE = 40
 possible_directions = ['up', 'down', 'left', 'right']
 
+
+class Apple:
+    def __init__(self, parent_screen):
+        self.image = pygame.image.load("resources/apple.jpg")
+        self.parent_screen = parent_screen
+        self.x = SIZE * 3
+        self.y = SIZE * 3
+
+    def draw(self):
+        self.parent_screen.blit(self.image, (self.x, self.y))
+        pygame.display.flip()
+
+
 class Snake:
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
@@ -55,14 +68,18 @@ class Snake:
 class Game:
     def __init__(self):
         pygame.init()
-        self.surface = pygame.display.set_mode((500, 500))
+        self.surface = pygame.display.set_mode((1000, 1000))
         self.surface.fill((110, 110, 5))
         self.snake = Snake(self.surface, 2)
         self.snake.draw()
+        self.apple = Apple(self.surface)
+        self.apple.draw()
 
-    def run(self, ):
+    def play(self):
+        self.snake.walk()
+        self.apple.draw()
+    def run(self):
         running = True
-
         while running:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
@@ -78,8 +95,9 @@ class Game:
                         self.snake.move_right()
                 elif event.type == QUIT:
                     running = False
-            self.snake.walk()
-            time.sleep(.5) #snake speed
+            time.sleep(.3)  # snake speed
+            self.play()
+
 
 
 if __name__ == "__main__":
