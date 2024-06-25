@@ -40,7 +40,6 @@ class Snake:
         self.y.append(2)
 
     def draw(self):
-        self.parent_screen.fill(background_color)
         for i in range(self.length):
             self.parent_screen.blit(self.block, (self.x[i], self.y[i]))
 
@@ -110,6 +109,7 @@ class Game:
         pygame.mixer.Sound.play(current_sound)
 
     def play(self):
+        self.render_background()
         self.snake.walk()
         self.apple.draw()
         self.display_score()
@@ -137,12 +137,16 @@ class Game:
         self.surface.blit(line2, (200, 400))
         pygame.display.flip()
 
+        pygame.mixer.music.pause()
+
     def reset_game(self):
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
-
+    def render_background(self):
+        bg = pygame.image.load("resources/background.jpg")
+        self.surface.blit(bg, (0, 0))
     def run(self):
         running = True
         pause = False
@@ -152,6 +156,7 @@ class Game:
                     if event.key == K_ESCAPE:
                         running = False
                     if event.key == K_RETURN:
+                        pygame.mixer.music.unpause()
                         pause = False
                     if not pause:
                         if event.key == K_UP:
